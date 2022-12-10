@@ -1,0 +1,91 @@
+@import 'vendor/bootstrap.css';
+
+body {
+  font-size: 14px;
+}
+
+#root {
+  max-width: 320px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.border1 {
+  border-color: #d2b9b9;
+}
+
+.features {
+  margin: 10px 10px 10px 0;
+}
+
+.index-page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100vh;
+
+  .header {
+    background-size: cover;
+    width: 100%;
+    height: 160px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    &.bg1 {
+      background-image: url('/assets/header1.jpg');
+    }
+
+    &.bg2 {
+      background-image: url('/assets/header2.jpg');
+    }
+
+    &.bg3 {
+      background-image: url('/assets/header3.jpg');
+    }
+
+    &.bg4 {
+      background-image: url('/assets/header4.jpg');
+    }
+  }
+
+  .header h2 {
+    font-size: 1.5rem;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    margin: 0;
+    padding: 5px 0;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 4px;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+
+  .body {
+    margin-top: 0.25rem;
+  }
+}
+
+.setting-page {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+
+  h5 {
+    font-size: 16px;
+  }
+}

@@ -2,7 +2,7 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Home';
 import SettingPage from './SettingPage';
 
-import './App.css';
+import './App.scss';
 
 export default function App() {
   return (

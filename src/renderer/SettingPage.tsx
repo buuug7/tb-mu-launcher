@@ -3,12 +3,11 @@
 
 import {
   EVENT_GET_REGEDIT,
-  EVENT_GET_USER_DATA,
   EVENT_KILL_MAIN,
   EVENT_SELECT_FOLDER,
   EVENT_SET_REGEDIT,
-  EVENT_SET_USER_DATA,
   showIpAndPortOption,
+  USER_DATA_KEY,
 } from 'config';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -48,18 +47,15 @@ export default function SettingPage() {
 
     electron.ipcRenderer.sendMessage(EVENT_GET_REGEDIT, []);
 
-    electron.ipcRenderer.once(EVENT_GET_USER_DATA, (data: any) => {
-      console.log(`EVENT_GET_USER_DATA`, data);
-      if (data.muFolder) {
-        setMuFolder(data.muFolder);
-      }
+    const userData = window.electron.store.get(USER_DATA_KEY) || {};
 
-      if (data.ipAndPort) {
-        setIpAndPort(data.ipAndPort);
-      }
-    });
+    if (userData.muFolder) {
+      setMuFolder(userData.muFolder);
+    }
 
-    electron.ipcRenderer.sendMessage(EVENT_GET_USER_DATA, []);
+    if (userData.ipAndPort) {
+      setIpAndPort(userData.ipAndPort);
+    }
   }, []);
 
   return (
@@ -173,7 +169,6 @@ export default function SettingPage() {
               type="checkbox"
               checked={WindowMode === 1}
               onChange={(e) => {
-                console.log(e.target.checked);
                 setWindowMode(e.target.checked ? 1 : 0);
               }}
             />
@@ -185,7 +180,6 @@ export default function SettingPage() {
               type="checkbox"
               checked={MusicOnOff === 1}
               onChange={(e) => {
-                console.log(e.target.checked);
                 setMusicOnOff(e.target.checked ? 1 : 0);
               }}
             />
@@ -197,7 +191,6 @@ export default function SettingPage() {
               type="checkbox"
               checked={SoundOnOff === 1}
               onChange={(e) => {
-                console.log(e.target.checked);
                 setSoundOnOff(e.target.checked ? 1 : 0);
               }}
             />
@@ -215,8 +208,6 @@ export default function SettingPage() {
             onClick={() => {
               electron.ipcRenderer.once(EVENT_SELECT_FOLDER, (data: any) => {
                 const folder = data.filePaths[0];
-                console.log(`floder`, folder);
-
                 if (!folder.endsWith('main.exe')) {
                   alert(`注意: 请选择客户端文件夹中的 main.exe`);
                   return;
@@ -271,16 +262,17 @@ export default function SettingPage() {
                 WindowMode,
                 ColorDepth,
               };
+
               electron.ipcRenderer.sendMessage(EVENT_SET_REGEDIT, [data]);
 
               if (muFolder.toLowerCase().endsWith('.exe')) {
-                electron.ipcRenderer.sendMessage(EVENT_SET_USER_DATA, [
-                  {
-                    muFolder: muFolder.slice(0, -9),
-                    ipAndPort,
-                  },
-                ]);
+                window.electron.store.set(USER_DATA_KEY, {
+                  muFolder: muFolder.slice(0, -9),
+                  ipAndPort,
+                  regedit: data,
+                });
               }
+
               setMessage('保存成功');
               setTimeout(() => {
                 history(-1);

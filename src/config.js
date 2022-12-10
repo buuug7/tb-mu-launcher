@@ -28,5 +28,5 @@ export const EVENT_UPDATE_FINISHED = 'EVENT_UPDATE_FINISHED';
 export const EVENT_GET_REGEDIT = 'EVENT_GET_REGEDIT';
 export const EVENT_SET_REGEDIT = 'EVENT_SET_REGEDIT';
 
-export const EVENT_GET_USER_DATA = 'EVENT_GET_USER_DATA';
-export const EVENT_SET_USER_DATA = 'EVENT_SET_USER_DATA';
+export const USER_DATA_KEY = 'userData';
+export const productionName = '土鳖奇迹登陆器';

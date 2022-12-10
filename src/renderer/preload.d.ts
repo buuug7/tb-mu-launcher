@@ -11,6 +11,11 @@ declare global {
         ): (() => void) | undefined;
         once(channel: Channels, func: (...args: unknown[]) => void): void;
       };
+
+      store: {
+        get: (key: string) => any;
+        set: (key: string, value: any) => void;
+      };
     };
   }
 }

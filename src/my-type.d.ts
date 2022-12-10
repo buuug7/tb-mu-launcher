@@ -11,3 +11,10 @@ type UpdatePayload = {
   items: UpdateItem[];
   apiVersion?: number;
 };
+
+type UserData = {
+  muFolder?: string;
+  ipAndPort?: string;
+  version?: number;
+  regedit?: object;
+};

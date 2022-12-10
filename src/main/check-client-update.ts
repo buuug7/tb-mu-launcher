@@ -3,13 +3,13 @@ import axios from 'axios';
 
 import fs from 'fs';
 import { killMainProcess, muDefaultFolder } from './util';
+import {getUserData, setUserData} from './store';
 import {
   clientUpdateUrl,
   EVENT_CHECK_CLIENT_UPDATE,
   EVENT_UPDATE_FINISHED,
   EVENT_UPDATE_PROGRESS,
 } from '../config';
-import { getUserData, saveUserData } from './user-data';
 
 export async function downloadByUrl(url: string, filename: string) {
   try {
@@ -50,7 +50,7 @@ export async function downloadByUrl(url: string, filename: string) {
 
 export async function downloadUpdatedFiles(event: Electron.IpcMainEvent) {
   const userData = getUserData();
-  const { muFolder = muDefaultFolder, version } = userData;
+  const { muFolder = muDefaultFolder, version = 0 } = userData;
 
   // get updated items from server
   try {
@@ -114,7 +114,7 @@ export async function downloadUpdatedFiles(event: Electron.IpcMainEvent) {
     }
 
     if (errorCount === 0) {
-      saveUserData({ ...userData, version: data.version });
+      setUserData({ ...userData, version: data.version })
     }
 
     event.reply(
@@ -134,10 +134,6 @@ export async function downloadUpdatedFiles(event: Electron.IpcMainEvent) {
 }
 
 export async function run(event: Electron.IpcMainEvent) {
-  console.log(
-    `EVENT_CHECK_CLIENT_UPDATEEVENT_CHECK_CLIENT_UPDATEEVENT_CHECK_CLIENT_UPDATE`
-  );
-
   const userData = getUserData();
   console.log(`userData1`, userData);
   const { muFolder = muDefaultFolder } = userData;

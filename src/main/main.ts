@@ -16,18 +16,16 @@ import MenuBuilder from './menu';
 import { killMainProcess, resolveHtmlPath } from './util';
 import { run as runClientCheck } from './check-client-update';
 import runMu from './run-mu';
-import { getUserData, saveUserData } from './user-data';
 import {
   EVENT_CHECK_CLIENT_UPDATE,
   EVENT_GET_REGEDIT,
-  EVENT_GET_USER_DATA,
   EVENT_KILL_MAIN,
   EVENT_RUN_MU,
   EVENT_SELECT_FOLDER,
   EVENT_SET_REGEDIT,
-  EVENT_SET_USER_DATA,
 } from '../config';
 import { getRegedit, setRegedit } from './regedit';
+import store from './store';
 
 class AppUpdater {
   constructor() {
@@ -38,6 +36,14 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+ipcMain.on('electron-store-get',async (event, value) => {
+  event.returnValue = store.get(value);
+});
+
+ipcMain.on('electron-store-set',async (event, key, value) => {
+  store.set(key, value);
+});
 
 ipcMain.on(EVENT_RUN_MU, async () => {
   runMu();
@@ -80,16 +86,6 @@ ipcMain.on(EVENT_SELECT_FOLDER, async (event) => {
   });
 
   event.reply(EVENT_SELECT_FOLDER, folders);
-});
-
-ipcMain.on(EVENT_GET_USER_DATA, async (event) => {
-  const userData = getUserData();
-  event.reply(EVENT_GET_USER_DATA, userData);
-});
-
-ipcMain.on(EVENT_SET_USER_DATA, async (event, data) => {
-  saveUserData(data[0]);
-  event.reply(EVENT_SET_USER_DATA, 'save data');
 });
 
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -139,7 +135,7 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 320,
-    height: 560,
+    height: 525,
     icon: getAssetPath('icon.png'),
     autoHideMenuBar: true,
     webPreferences: {

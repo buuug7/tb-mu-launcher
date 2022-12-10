@@ -25,4 +25,13 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('CHECK_CLIENT_UPDATE');
     },
   },
+
+  store: {
+    get(key: string) {
+      return ipcRenderer.sendSync('electron-store-get', key);
+    },
+    set(key: string, value: any) {
+      ipcRenderer.send('electron-store-set', key, value);
+    },
+  },
 });

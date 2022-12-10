@@ -4,6 +4,7 @@ import {
   EVENT_UPDATE_FINISHED,
   EVENT_UPDATE_PROGRESS,
   newsUrl,
+  productionName,
 } from 'config';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -72,19 +73,19 @@ export default function Home() {
   return (
     <div className="index-page">
       <div className={`header ${currentBg}`}>
-        <h2 className="text-center">土鳖登录器</h2>
+        <h2 className="text-center">{productionName}</h2>
       </div>
 
-      <div className="flex-center actions mt-3">
+      <div className="flex-center actions mt-2">
         <button
           disabled={!updateInfo.finished}
           type="button"
-          className="btn btn-primary me-1"
+          className="btn btn-primary btn-sm me-1"
           onClick={updateClient}
         >
           启动游戏
         </button>
-        <Link to="/setting" className="btn btn-outline-primary">
+        <Link to="/setting" className="btn btn-outline-primary btn-sm">
           参数设置
         </Link>
       </div>
@@ -93,19 +94,21 @@ export default function Home() {
         <div className="my-2 p-2 text-center text-break">{updateInfo.msg}</div>
       )}
 
-      <div className="features mt-3">
-        <ul>
-          {news.map((item: any) => (
-            <li key={item.id}>{item.text}</li>
-          ))}
-        </ul>
-      </div>
+      {updateInfo.finished && (
+        <div className="features mt-3">
+          <ul>
+            {news.map((item: any) => (
+              <li key={item.id}>{item.text}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="footer text-muted text-center">
         <a href="http://mu.yoursoups.com/" target="_blank" rel="noreferrer">
-          土鳖奇迹网站
+          土鳖奇迹官网
         </a>
-        <div>v1.4.0</div>
+        <span className="ms-2">v1.6.0</span>
       </div>
     </div>
   );
