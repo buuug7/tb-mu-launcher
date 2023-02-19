@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog, crashReporter } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -35,6 +35,20 @@ class AppUpdater {
   }
 }
 
+app.commandLine.appendSwitch('no-sandbox')
+app.commandLine.appendSwitch('--no-sandbox')
+
+// app.commandLine.appendSwitch('disable-software-rasterizer')
+// app.commandLine.appendSwitch('disable-gpu')
+// app.commandLine.appendSwitch('disable-gpu-compositing')
+// app.commandLine.appendSwitch('disable-gpu-rasterization')
+// app.commandLine.appendSwitch('disable-gpu-sandbox')
+// app.disableHardwareAcceleration();
+
+
+// console.log(app.getPath('crashDumps'))
+// crashReporter.start({ submitURL: '', uploadToServer: false })
+
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('electron-store-get',async (event, value) => {
@@ -49,8 +63,8 @@ ipcMain.on(EVENT_RUN_MU, async () => {
   runMu();
 });
 
-ipcMain.on(EVENT_CHECK_CLIENT_UPDATE, async (event) => {
-  runClientCheck(event);
+ipcMain.on(EVENT_CHECK_CLIENT_UPDATE, async (event, args) => {
+  runClientCheck(event, args);
 });
 
 ipcMain.on(EVENT_KILL_MAIN, async (event) => {
@@ -144,6 +158,7 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
       nodeIntegration: true,
       webSecurity: false,
+      sandbox: false
     },
   });
 

@@ -10,12 +10,14 @@ export const updateEveryLaunch = true;
 // 显示配置IP跟端口选项
 export const showIpAndPortOption = false;
 
+// 网站 base URL
+export const webBaseUrl = 'http://mu.yoursoups.com';
+
 // 更新客户端 URL
-export const clientUpdateUrl =
-  'http://mu.yoursoups.com/client-updates/v1/update.json';
+export const clientUpdateUrl = `${webBaseUrl}/client-updates/v1/update.json`;
 
 // 新闻
-export const newsUrl = 'http://mu.yoursoups.com/json/news.json';
+export const newsUrl = `${webBaseUrl}/json/news.json`;
 
 export const EVENT_RUN_MU = 'EVENT_RUN_MU';
 export const EVENT_SELECT_FOLDER = 'EVENT_SELECT_FOLDER';
@@ -29,4 +31,3 @@ export const EVENT_GET_REGEDIT = 'EVENT_GET_REGEDIT';
 export const EVENT_SET_REGEDIT = 'EVENT_SET_REGEDIT';
 
 export const USER_DATA_KEY = 'userData';
-export const productionName = '土鳖奇迹登陆器';

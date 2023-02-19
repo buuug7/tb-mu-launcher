@@ -2,10 +2,12 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
 import {
+  EVENT_CHECK_CLIENT_UPDATE,
   EVENT_GET_REGEDIT,
   EVENT_KILL_MAIN,
   EVENT_SELECT_FOLDER,
   EVENT_SET_REGEDIT,
+  EVENT_UPDATE_FINISHED,
   showIpAndPortOption,
   USER_DATA_KEY,
 } from 'config';
@@ -46,9 +48,7 @@ export default function SettingPage() {
     });
 
     electron.ipcRenderer.sendMessage(EVENT_GET_REGEDIT, []);
-
     const userData = window.electron.store.get(USER_DATA_KEY) || {};
-
     if (userData.muFolder) {
       setMuFolder(userData.muFolder);
     }
@@ -63,6 +63,26 @@ export default function SettingPage() {
       <h4 className="text-left">应用设置</h4>
       <hr className="border1" />
       <div className="">
+        <h5>更新</h5>
+        <div>
+          <a
+            role="button"
+            href="#"
+            onClick={() => {
+              electron.ipcRenderer.once(EVENT_UPDATE_FINISHED, () => {
+                alert('更新成功!');
+              });
+
+              electron.ipcRenderer.sendMessage(EVENT_CHECK_CLIENT_UPDATE, [
+                { forceUpdate: true },
+              ]);
+            }}
+          >
+            更新客户端
+          </a>
+        </div>
+        <hr className="border1" />
+
         <h5>进程</h5>
         <div>
           <a
@@ -81,8 +101,8 @@ export default function SettingPage() {
         </div>
         <hr className="border1" />
 
-        <div className="d-flex justify-content-center align-items-center">
-          <span className="flex-shrink-0 me-2">账号</span>
+        <h5>账号</h5>
+        <div>
           <input
             type="text"
             className="form-control"

@@ -4,11 +4,12 @@ import {
   EVENT_UPDATE_FINISHED,
   EVENT_UPDATE_PROGRESS,
   newsUrl,
-  productionName,
+  webBaseUrl,
 } from 'config';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import meta from '../../release/app/package.json'
 
 const { electron } = window;
 
@@ -73,7 +74,7 @@ export default function Home() {
   return (
     <div className="index-page">
       <div className={`header ${currentBg}`}>
-        <h2 className="text-center">{productionName}</h2>
+        <h2 className="text-center">{meta.productionName}</h2>
       </div>
 
       <div className="flex-center actions mt-2">
@@ -105,10 +106,10 @@ export default function Home() {
       )}
 
       <div className="footer text-muted text-center">
-        <a href="http://mu.yoursoups.com/" target="_blank" rel="noreferrer">
+        <a href={webBaseUrl} target="_blank" rel="noreferrer">
           土鳖奇迹官网
         </a>
-        <span className="ms-2">v1.6.0</span>
+        <span className="ms-2">v{meta.version}</span>
       </div>
     </div>
   );

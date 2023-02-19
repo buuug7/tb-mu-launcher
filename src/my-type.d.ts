@@ -6,7 +6,6 @@ type UpdateItem = {
 
 type UpdatePayload = {
   version: number;
-  forceUpdate: boolean;
   baseUrl: string;
   items: UpdateItem[];
   apiVersion?: number;

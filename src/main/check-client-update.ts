@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import fs from 'fs';
 import { killMainProcess, muDefaultFolder } from './util';
-import {getUserData, setUserData} from './store';
+import { getUserData, setUserData } from './store';
 import {
   clientUpdateUrl,
   EVENT_CHECK_CLIENT_UPDATE,
@@ -20,7 +20,7 @@ export async function downloadByUrl(url: string, filename: string) {
     });
 
     const chunks: any[] = [];
-    console.log(`Status: ${response.status}`);
+    console.log(`downloadStatus: ${response.status}`);
 
     return await new Promise((resolve, reject) => {
       response.data.on('data', (chunk: Buffer) => {
@@ -33,7 +33,7 @@ export async function downloadByUrl(url: string, filename: string) {
 
       response.data.on('end', () => {
         const buf = Buffer.concat(chunks);
-        console.log(`filename`, filename);
+        console.log(`fileName: `, filename);
 
         fs.writeFileSync(filename, buf);
         resolve('下载成功');
@@ -48,7 +48,10 @@ export async function downloadByUrl(url: string, filename: string) {
   }
 }
 
-export async function downloadUpdatedFiles(event: Electron.IpcMainEvent) {
+export async function downloadUpdatedFiles(
+  event: Electron.IpcMainEvent,
+  forceUpdate: boolean = false
+) {
   const userData = getUserData();
   const { muFolder = muDefaultFolder, version = 0 } = userData;
 
@@ -56,16 +59,15 @@ export async function downloadUpdatedFiles(event: Electron.IpcMainEvent) {
   try {
     const { data } = await axios.get(clientUpdateUrl);
     console.log(`data`, data);
-    console.log(`local version: ${version}`);
-    console.log(`latest version: ${data.version}`);
+    console.log('version: ', `current ${version}, next ${data.version}`);
+    console.log(`updateType: `, forceUpdate);
 
-    if (data.version <= version) {
+    if (data.version <= version && !forceUpdate) {
       const msg = `当前版本是最新的，无需更新!`;
       event.reply(EVENT_UPDATE_FINISHED, {
         msg,
         finished: true,
       });
-
       return;
     }
 
@@ -97,7 +99,7 @@ export async function downloadUpdatedFiles(event: Electron.IpcMainEvent) {
     let errorCount = 0;
     // eslint-disable-next-line no-restricted-syntax
     for (const item of updateItems) {
-      console.log(item.link);
+      console.log(`updateLink: `, item.link);
       try {
         // eslint-disable-next-line no-await-in-loop
         await downloadByUrl(item.link, item.filename);
@@ -114,7 +116,7 @@ export async function downloadUpdatedFiles(event: Electron.IpcMainEvent) {
     }
 
     if (errorCount === 0) {
-      setUserData({ ...userData, version: data.version })
+      setUserData({ ...userData, version: data.version });
     }
 
     event.reply(
@@ -133,9 +135,14 @@ export async function downloadUpdatedFiles(event: Electron.IpcMainEvent) {
   }
 }
 
-export async function run(event: Electron.IpcMainEvent) {
+export async function run(event: Electron.IpcMainEvent, args: any[]) {
   const userData = getUserData();
-  console.log(`userData1`, userData);
+  let forceUpdate = false;
+
+  if (args.length > 0) {
+    forceUpdate = args[0]['forceUpdate'];
+  }
+
   const { muFolder = muDefaultFolder } = userData;
 
   if (!muFolder) {
@@ -143,5 +150,5 @@ export async function run(event: Electron.IpcMainEvent) {
     return;
   }
 
-  downloadUpdatedFiles(event);
+  downloadUpdatedFiles(event, forceUpdate);
 }
