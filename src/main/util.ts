@@ -16,6 +16,7 @@ export function resolveHtmlPath(htmlFileName: string) {
 
 // export const muDefaultFolder = path.resolve(process.execPath, '..', '..');
 export const muDefaultFolder = path.resolve(rootPath, '..', '..', '..');
+export const _rootPath = rootPath
 
 export function killMainProcess() {
   // eslint-disable-next-line promise/catch-or-return

@@ -3,7 +3,8 @@ const store = new Store();
 import { USER_DATA_KEY } from '../config';
 
 export const getUserData = () => {
-  return store.get(USER_DATA_KEY) as UserData;
+  const userData = store.get(USER_DATA_KEY) as UserData || {};
+  return userData
 };
 
 export const setUserData = (value: any) => {
