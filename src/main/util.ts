@@ -20,16 +20,21 @@ export const _rootPath = rootPath
 
 export function killMainProcess() {
   // eslint-disable-next-line promise/catch-or-return
-  findProcess('name', 'main.exe').then(
-    // eslint-disable-next-line promise/always-return
-    (list) => {
-      console.log(`list`, list);
-      list.forEach((it) => {
-        process.kill(it.pid);
-      });
-    },
-    (err) => {
-      console.log(`err`, err);
-    }
-  );
+  return new Promise((resolve, reject) => {
+    findProcess('name', 'main.exe').then(
+      // eslint-disable-next-line promise/always-return
+      (list) => {
+        console.log(`list`, list);
+        list.forEach((it) => {
+          process.kill(it.pid);
+        });
+        resolve(true)
+      },
+      (err) => {
+        console.log(`err`, err);
+        reject()
+      }
+    );
+  })
 }
+

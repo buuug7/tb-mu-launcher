@@ -21,10 +21,11 @@ body {
 }
 
 .features {
-  margin: 10px 10px 10px 0;
+  margin: 10px 10px 15px 0;
 }
 
 .index-page {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -71,9 +72,10 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
     width: 100%;
     padding: 4px 8px;
-    font-size: 13px;
+    // font-size: 13px;
   }
 
   .body {
@@ -89,3 +91,4 @@ body {
     font-size: 16px;
   }
 }
+

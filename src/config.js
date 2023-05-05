@@ -11,6 +11,7 @@ export const updateEveryLaunch = true;
 export const showIpAndPortOption = false;
 
 // 网站 base URL
+// export const webBaseUrl = 'http://localhost:3000';
 export const webBaseUrl = 'http://mu.yoursoups.com';
 
 // 更新客户端 URL
@@ -18,6 +19,18 @@ export const clientUpdateUrl = `${webBaseUrl}/client-updates/v1/update.json`;
 
 // 新闻
 export const newsUrl = `${webBaseUrl}/json/news.json`;
+
+// 服务器,分区
+export const servers = [
+  {
+    name: '一区',
+    key: '1',
+  },
+  {
+    name: '二区',
+    key: '2',
+  },
+];
 
 export const EVENT_RUN_MU = 'EVENT_RUN_MU';
 export const EVENT_SELECT_FOLDER = 'EVENT_SELECT_FOLDER';

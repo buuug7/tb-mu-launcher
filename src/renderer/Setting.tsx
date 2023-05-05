@@ -8,6 +8,8 @@ import {
   EVENT_SELECT_FOLDER,
   EVENT_SET_REGEDIT,
   EVENT_UPDATE_FINISHED,
+  EVENT_UPDATE_PROGRESS,
+  servers,
   showIpAndPortOption,
   USER_DATA_KEY,
 } from 'config';
@@ -26,7 +28,13 @@ export default function SettingPage() {
   const [ColorDepth, setColorDepth] = useState(1);
   const [muFolder, setMuFolder] = useState('');
   const [ipAndPort, setIpAndPort] = useState('');
+  const [server, setServer] = useState(servers[0]);
   const [Message, setMessage] = useState('');
+  const [updateInfo, setUpdateInfo] = useState({
+    msg: '检测更新...',
+    finished: true,
+  });
+  const [userData, setUserData] = useState({})
 
   const onResolutionChange = (e: any) => {
     setResolution(Number(e.target.value));
@@ -48,13 +56,20 @@ export default function SettingPage() {
     });
 
     electron.ipcRenderer.sendMessage(EVENT_GET_REGEDIT, []);
+
     const userData = window.electron.store.get(USER_DATA_KEY) || {};
+    setUserData(userData);
+
     if (userData.muFolder) {
       setMuFolder(userData.muFolder);
     }
 
     if (userData.ipAndPort) {
       setIpAndPort(userData.ipAndPort);
+    }
+
+    if (userData.server) {
+      setServer(userData.server);
     }
   }, []);
 
@@ -63,14 +78,55 @@ export default function SettingPage() {
       <h4 className="text-left">应用设置</h4>
       <hr className="border1" />
       <div className="">
+        <h5>服务器选择</h5>
+        <select
+          className="form-select"
+          value={server.key}
+          onChange={(e) => {
+            console.log(`e`, e.target.value);
+            const selectedServer =
+              servers.find((it) => it.key === e.target.value) || servers[0];
+            setServer(selectedServer);
+          }}
+        >
+          {servers.map((it) => (
+            <option
+              value={it.key}
+              key={it.key}
+            >
+              {it.name}
+            </option>
+          ))}
+        </select>
+        <hr className="border1" />
+
         <h5>更新</h5>
+        {!updateInfo.finished && (
+          <div className="my-2 p-2 text-center text-break">
+            {updateInfo.msg}
+          </div>
+        )}
         <div>
           <a
             role="button"
             href="#"
             onClick={() => {
+              setUpdateInfo((pre) => ({
+                ...pre,
+                finished: false,
+              }));
+
+              electron.ipcRenderer.on(EVENT_UPDATE_PROGRESS, (payload) => {
+                console.log(`payload`, payload);
+                setUpdateInfo(payload as any);
+              });
+
               electron.ipcRenderer.once(EVENT_UPDATE_FINISHED, () => {
                 alert('更新成功!');
+                setUpdateInfo((pre) => ({
+                  ...pre,
+                  finished: true,
+                }));
               });
 
               electron.ipcRenderer.sendMessage(EVENT_CHECK_CLIENT_UPDATE, [
@@ -284,14 +340,15 @@ export default function SettingPage() {
               };
 
               electron.ipcRenderer.sendMessage(EVENT_SET_REGEDIT, [data]);
-
-              if (muFolder.toLowerCase().endsWith('.exe')) {
-                window.electron.store.set(USER_DATA_KEY, {
-                  muFolder: muFolder.slice(0, -9),
-                  ipAndPort,
-                  regedit: data,
-                });
-              }
+              window.electron.store.set(USER_DATA_KEY, {
+                ...userData,
+                muFolder: muFolder?.toLowerCase().endsWith('.exe')
+                  ? muFolder.slice(0, -9)
+                  : muFolder,
+                ipAndPort,
+                regedit: data,
+                server,
+              });
 
               setMessage('保存成功');
               setTimeout(() => {

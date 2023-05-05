@@ -1,14 +1,15 @@
 import path from 'path';
 import axios from 'axios';
-
+import log from 'electron-log';
 import fs from 'fs';
 import { killMainProcess, muDefaultFolder } from './util';
 import { getUserData, setUserData } from './store';
 import {
-  clientUpdateUrl,
   EVENT_CHECK_CLIENT_UPDATE,
   EVENT_UPDATE_FINISHED,
   EVENT_UPDATE_PROGRESS,
+  servers,
+  webBaseUrl,
 } from '../config';
 
 export async function downloadByUrl(url: string, filename: string) {
@@ -20,7 +21,10 @@ export async function downloadByUrl(url: string, filename: string) {
     });
 
     const chunks: any[] = [];
-    console.log(`downloadStatus: ${response.status}`);
+
+    console.log(
+      `download: status=${response.status},url=${url},filename=${filename}`
+    );
 
     return await new Promise((resolve, reject) => {
       response.data.on('data', (chunk: Buffer) => {
@@ -33,8 +37,6 @@ export async function downloadByUrl(url: string, filename: string) {
 
       response.data.on('end', () => {
         const buf = Buffer.concat(chunks);
-        console.log(`fileName: `, filename);
-
         fs.writeFileSync(filename, buf);
         resolve('下载成功');
       });
@@ -53,16 +55,36 @@ export async function downloadUpdatedFiles(
   forceUpdate: boolean = false
 ) {
   const userData = getUserData();
-  const { muFolder = muDefaultFolder, version = 0 } = userData;
+  const defaultServer = userData.server || servers[0];
+  const { muFolder = muDefaultFolder } = userData;
 
-  // get updated items from server
+  // @ts-ignore
+  const version = userData[`version-${defaultServer.key}`] || 0;
+  const updateUrl = `${webBaseUrl}/api/check-client-update?server=${defaultServer.key}`;
+
   try {
-    const { data } = await axios.get(clientUpdateUrl);
-    console.log(`data`, data);
-    console.log('version: ', `current ${version}, next ${data.version}`);
-    console.log(`updateType: `, forceUpdate);
+    // get updated items from server
+    const response = await axios.get(updateUrl, {
+      maxContentLength: Infinity,
+    });
+    const data: any = response.data;
 
-    if (data.version <= version && !forceUpdate) {
+    log.info(`update res: `, data);
+
+    const needUpdate =
+      parseInt(data.version) > parseInt(version) || forceUpdate;
+
+    const logUpdateInfo = {
+      forceUpdate,
+      latestVersion: data.version,
+      currentVersion: version,
+      needUpdate,
+      status: response.status,
+    };
+
+    log.info(`update info: `, logUpdateInfo);
+
+    if (!needUpdate) {
       const msg = `当前版本是最新的，无需更新!`;
       event.reply(EVENT_UPDATE_FINISHED, {
         msg,
@@ -72,41 +94,37 @@ export async function downloadUpdatedFiles(
     }
 
     let updateItems = data.items.map((item: UpdateItem) => {
-      let { link } = item;
-      if (data.apiVersion > 1) {
-        link = (data.baseUrl || '') + item.link;
-      }
-      const filename = link.split('/').pop()?.split('__').join('/') || '';
-
       return {
         ...item,
-        link,
-        filename: path.join(muFolder, filename),
+        link: data.baseUrl + item.link,
+        filename: path.join(
+          muFolder,
+          item.link.replace(`/updates/${defaultServer.key}/`, '')
+        ),
       };
     });
 
-    if (data.apiVersion > 1) {
-      updateItems = updateItems.filter((it: UpdateItem) => it.needUpdate);
-    }
+    updateItems = updateItems.filter((it: UpdateItem) => it.update);
 
     if (updateItems.length > 0) {
       // 更新前杀死正在运行的 main.exe
       killMainProcess();
     }
 
-    console.log(`begin update client`);
+    log.info(`update updateItems: `, updateItems);
+    log.info(`begin download update files`);
+
     let updateCount = 0;
     let errorCount = 0;
     // eslint-disable-next-line no-restricted-syntax
     for (const item of updateItems) {
-      console.log(`updateLink: `, item.link);
       try {
         // eslint-disable-next-line no-await-in-loop
         await downloadByUrl(item.link, item.filename);
         updateCount += 1;
 
         event.reply(EVENT_UPDATE_PROGRESS, {
-          msg: `[${updateCount}/${updateItems.length}]${item.link}`,
+          msg: `[${updateCount}/${updateItems.length}]${item.filename}`,
           finished: false,
         });
       } catch (err: any) {
@@ -116,7 +134,10 @@ export async function downloadUpdatedFiles(
     }
 
     if (errorCount === 0) {
-      setUserData({ ...userData, version: data.version });
+      setUserData({
+        ...userData,
+        [`version-${defaultServer.key}`]: data.version,
+      });
     }
 
     event.reply(
@@ -146,7 +167,7 @@ export async function run(event: Electron.IpcMainEvent, args: any[]) {
   const { muFolder = muDefaultFolder } = userData;
 
   if (!muFolder) {
-    event.reply(EVENT_CHECK_CLIENT_UPDATE, '请将该程序放置在Mu客户端目录');
+    event.reply(EVENT_CHECK_CLIENT_UPDATE, '请设置Mu客户端目录');
     return;
   }
 

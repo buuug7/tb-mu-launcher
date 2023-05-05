@@ -1,7 +1,7 @@
 type UpdateItem = {
   link: string;
-  needUpdate: boolean;
-  filename?: string;
+  filename: string;
+  update?: boolean;
 };
 
 type UpdatePayload = {
@@ -16,4 +16,8 @@ type UserData = {
   ipAndPort?: string;
   version?: number;
   regedit?: object;
+  server?: {
+    name: string;
+    key: string;
+  };
 };
