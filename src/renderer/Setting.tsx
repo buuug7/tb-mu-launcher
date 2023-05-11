@@ -87,6 +87,15 @@ export default function SettingPage() {
             const selectedServer =
               servers.find((it) => it.key === e.target.value) || servers[0];
             setServer(selectedServer);
+
+            // 每次选择后重置更新号
+            window.electron.store.set(USER_DATA_KEY, {
+              ...userData,
+              server: selectedServer,
+              [`version-${selectedServer.key}`]: 0,
+            });
+
+            history(-1);
           }}
         >
           {servers.map((it) => (

@@ -124,7 +124,7 @@ export async function downloadUpdatedFiles(
         updateCount += 1;
 
         event.reply(EVENT_UPDATE_PROGRESS, {
-          msg: `[${updateCount}/${updateItems.length}]${item.filename}`,
+          msg: `[${updateCount}/${updateItems.length}]${item.link}`,
           finished: false,
         });
       } catch (err: any) {
