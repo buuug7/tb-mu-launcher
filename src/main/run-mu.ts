@@ -1,9 +1,9 @@
 import child from 'child_process';
 import { dialog } from 'electron';
+import log from 'electron-log';
 import { defaultIp, defaultPort } from '../config';
 import { muDefaultFolder, _rootPath } from './util';
 import { getUserData } from './store';
-import log from 'electron-log';
 
 export default async function run() {
   const userData = getUserData();

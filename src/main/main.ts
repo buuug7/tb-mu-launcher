@@ -9,7 +9,14 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog, crashReporter } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  dialog,
+  crashReporter,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -35,8 +42,8 @@ class AppUpdater {
   }
 }
 
-app.commandLine.appendSwitch('no-sandbox')
-app.commandLine.appendSwitch('--no-sandbox')
+app.commandLine.appendSwitch('no-sandbox');
+app.commandLine.appendSwitch('--no-sandbox');
 
 // app.commandLine.appendSwitch('disable-software-rasterizer')
 // app.commandLine.appendSwitch('disable-gpu')
@@ -45,17 +52,16 @@ app.commandLine.appendSwitch('--no-sandbox')
 // app.commandLine.appendSwitch('disable-gpu-sandbox')
 // app.disableHardwareAcceleration();
 
-
 // console.log(app.getPath('crashDumps'))
 // crashReporter.start({ submitURL: '', uploadToServer: false })
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('electron-store-get',async (event, value) => {
+ipcMain.on('electron-store-get', async (event, value) => {
   event.returnValue = store.get(value);
 });
 
-ipcMain.on('electron-store-set',async (event, key, value) => {
+ipcMain.on('electron-store-set', async (event, key, value) => {
   store.set(key, value);
 });
 
@@ -158,7 +164,7 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
       nodeIntegration: true,
       webSecurity: false,
-      sandbox: false
+      sandbox: false,
     },
   });
 

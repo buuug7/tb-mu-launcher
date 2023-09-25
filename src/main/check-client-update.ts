@@ -52,7 +52,7 @@ export async function downloadByUrl(url: string, filename: string) {
 
 export async function downloadUpdatedFiles(
   event: Electron.IpcMainEvent,
-  forceUpdate: boolean = false
+  forceUpdate = false
 ) {
   const userData = getUserData();
   const defaultServer = userData.server || servers[0];
@@ -67,12 +67,12 @@ export async function downloadUpdatedFiles(
     const response = await axios.get(updateUrl, {
       maxContentLength: Infinity,
     });
-    const data: any = response.data;
+    const { data } = response;
 
     log.info(`update res: `, data);
 
     const needUpdate =
-      parseInt(data.version) > parseInt(version) || forceUpdate;
+      parseInt(data.version, 10) > parseInt(version, 10) || forceUpdate;
 
     const logUpdateInfo = {
       forceUpdate,
@@ -161,7 +161,7 @@ export async function run(event: Electron.IpcMainEvent, args: any[]) {
   let forceUpdate = false;
 
   if (args.length > 0) {
-    forceUpdate = args[0]['forceUpdate'];
+    forceUpdate = args[0].forceUpdate;
   }
 
   const { muFolder = muDefaultFolder } = userData;

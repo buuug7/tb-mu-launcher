@@ -16,11 +16,12 @@ export function resolveHtmlPath(htmlFileName: string) {
 
 // export const muDefaultFolder = path.resolve(process.execPath, '..', '..');
 export const muDefaultFolder = path.resolve(rootPath, '..', '..', '..');
-export const _rootPath = rootPath
+// eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle
+export const _rootPath = rootPath;
 
 export function killMainProcess() {
-  // eslint-disable-next-line promise/catch-or-return
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line promise/catch-or-return
     findProcess('name', 'main.exe').then(
       // eslint-disable-next-line promise/always-return
       (list) => {
@@ -28,13 +29,12 @@ export function killMainProcess() {
         list.forEach((it) => {
           process.kill(it.pid);
         });
-        resolve(true)
+        resolve(true);
       },
       (err) => {
         console.log(`err`, err);
-        reject()
+        reject();
       }
     );
-  })
+  });
 }
-
