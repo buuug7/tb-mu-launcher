@@ -56,7 +56,7 @@ export async function downloadUpdatedFiles(
 ) {
   const userData = getUserData();
   const defaultServer = userData.server || servers[0];
-  const { muFolder = muDefaultFolder } = userData;
+  const muFolder = userData.muFolder || muDefaultFolder;
 
   // @ts-ignore
   const version = userData[`version-${defaultServer.key}`] || 0;
