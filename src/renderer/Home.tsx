@@ -17,7 +17,6 @@ const { electron } = window;
 
 export default function Home() {
   const [news, setNews] = useState([]);
-  const [currentBg, setCurrentBg] = useState('bg4');
   const [updateInfo, setUpdateInfo] = useState({
     msg: '检测更新...',
     finished: true,
@@ -48,20 +47,6 @@ export default function Home() {
     electron.ipcRenderer.sendMessage(EVENT_CHECK_CLIENT_UPDATE, []);
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentBg((pre) => {
-        const index = Number(pre.replace('bg', ''));
-        const nextIndex = index + 1 > 4 ? 1 : index + 1;
-        return `bg${nextIndex}`;
-      });
-    }, 5000);
-
-    return () => {
-      console.log(`clearInterval`, timer);
-      clearInterval(timer);
-    };
-  }, []);
 
   useEffect(() => {
     axios
@@ -81,14 +66,13 @@ export default function Home() {
     setDefaultServer(server);
     window.electron.store.set(USER_DATA_KEY, {
       ...userData,
-      server
+      server,
     });
-
   }, []);
 
   return (
     <div className="index-page">
-      <div className={`header ${currentBg}`}>
+      <div className="header">
         <h2 className="text-center">{meta.productionName}</h2>
       </div>
 

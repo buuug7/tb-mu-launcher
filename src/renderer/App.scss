@@ -22,6 +22,7 @@ body {
 
 .features {
   margin: 10px 10px 15px 0;
+  font-size: 14px;
 }
 
 .index-page {
@@ -40,27 +41,15 @@ body {
     justify-content: center;
     align-items: flex-end;
 
-    &.bg1 {
-      background-image: url('/assets/header1.jpg');
-    }
+    background-image: url('/assets/banner2.jpg');
+    background-repeat: no-repeat;
 
-    &.bg2 {
-      background-image: url('/assets/header2.jpg');
-    }
-
-    &.bg3 {
-      background-image: url('/assets/header3.jpg');
-    }
-
-    &.bg4 {
-      background-image: url('/assets/header4.jpg');
-    }
   }
 
   .header h2 {
-    font-size: 1.5rem;
+    font-size: 20px;
     width: 100%;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.4);
     margin: 0;
     padding: 5px 0;
   }
