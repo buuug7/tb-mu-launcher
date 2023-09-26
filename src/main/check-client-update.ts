@@ -2,7 +2,7 @@ import path from 'path';
 import axios from 'axios';
 import log from 'electron-log';
 import fs from 'fs';
-import { killMainProcess, muDefaultFolder } from './util';
+import { killMainProcess, muDefaultFolder, _rootPath } from './util';
 import { getUserData, setUserData } from './store';
 import {
   EVENT_CHECK_CLIENT_UPDATE,
@@ -58,6 +58,7 @@ export async function downloadUpdatedFiles(
   const defaultServer = userData.server || servers[0];
   const muFolder = userData.muFolder || muDefaultFolder;
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const version = userData[`version-${defaultServer.key}`] || 0;
   const updateUrl = `${webBaseUrl}/api/check-client-update?server=${defaultServer.key}`;
@@ -164,10 +165,13 @@ export async function run(event: Electron.IpcMainEvent, args: any[]) {
     forceUpdate = args[0].forceUpdate;
   }
 
-  const { muFolder = muDefaultFolder } = userData;
+  const muFolder = userData.muFolder || muDefaultFolder;
+
+  log.info(`muDefaultFolder: ${muDefaultFolder}`);
+  log.info(`_rootPath: ${_rootPath}`);
 
   if (!muFolder) {
-    event.reply(EVENT_CHECK_CLIENT_UPDATE, '请设置Mu客户端目录');
+    event.reply(EVENT_CHECK_CLIENT_UPDATE, '请设置 MU 客户端目录');
     return;
   }
 
