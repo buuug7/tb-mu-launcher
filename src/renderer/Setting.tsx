@@ -46,7 +46,7 @@ export default function SettingPage() {
 
   useEffect(() => {
     electron.ipcRenderer.once(EVENT_GET_REGEDIT, (data: any) => {
-      console.log(`EVENT_GET_REGEDIT`, data);
+      console.log(EVENT_GET_REGEDIT, data);
       setID(data.ID.value);
       setResolution(data.Resolution.value);
       setMusicOnOff(data.MusicOnOff.value);

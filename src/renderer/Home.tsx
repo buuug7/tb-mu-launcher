@@ -16,9 +16,10 @@ import meta from '../../release/app/package.json';
 const { electron } = window;
 
 export default function Home() {
+  const defaultMsg = '检测更新...';
   const [news, setNews] = useState([]);
   const [updateInfo, setUpdateInfo] = useState({
-    msg: '检测更新...',
+    msg: defaultMsg,
     finished: true,
   });
   const [defaultServer, setDefaultServer] = useState(servers[0]);
@@ -26,6 +27,7 @@ export default function Home() {
   const updateClient = () => {
     setUpdateInfo((pre) => ({
       ...pre,
+      msg: defaultMsg,
       finished: false,
     }));
 
@@ -35,7 +37,7 @@ export default function Home() {
     });
 
     electron.ipcRenderer.once(EVENT_UPDATE_FINISHED, () => {
-      console.log(`EVENT_UPDATE_FINISHED`);
+      console.log(EVENT_UPDATE_FINISHED);
       setUpdateInfo((pre) => ({
         ...pre,
         finished: true,
@@ -46,7 +48,6 @@ export default function Home() {
 
     electron.ipcRenderer.sendMessage(EVENT_CHECK_CLIENT_UPDATE, []);
   };
-
 
   useEffect(() => {
     axios
