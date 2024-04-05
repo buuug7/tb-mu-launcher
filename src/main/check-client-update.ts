@@ -150,8 +150,8 @@ export async function downloadUpdatedFiles(
     );
   } catch (error: any) {
     console.log('error:', error.message);
-    event.reply('UPDATED_FINISHED', {
-      msg: `异常,请稍微再试`,
+    event.reply(EVENT_UPDATE_FINISHED, {
+      msg: `更新异常, 请稍后再试`,
       finished: true,
     });
   }
