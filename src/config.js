@@ -23,12 +23,12 @@ export const newsUrl = `${webBaseUrl}/json/news.json`;
 // 服务器,分区
 export const servers = [
   {
-    name: '一区',
-    key: '1',
-  },
-  {
     name: '二区',
     key: '2',
+  },
+  {
+    name: '一区',
+    key: '1',
   },
 ];
 
