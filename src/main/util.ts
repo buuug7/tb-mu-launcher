@@ -15,7 +15,7 @@ export function resolveHtmlPath(htmlFileName: string) {
 }
 
 // export const muDefaultFolder = path.resolve(process.execPath, '..', '..');
-export const muDefaultFolder = path.resolve(rootPath, '..', '..', '..');
+export const muDefaultFolder = path.resolve(rootPath, '..', '..');
 // eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle
 export const _rootPath = rootPath;
 
